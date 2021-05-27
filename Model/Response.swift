@@ -11,7 +11,6 @@ struct ResponseModel: Codable {
     var results: [Character]
     
     enum CodingKeys: String, CodingKey {
-        case info = "info"
         case results = "results"
     }
     
