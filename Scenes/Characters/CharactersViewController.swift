@@ -35,12 +35,15 @@ final class CharactersViewController: BaseViewController {
             make.top.equalTo(view).offset(65)
         }
         
+        collectionView.register(CharacterCollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
         collectionView.backgroundColor = .clear
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { (make) in
             make.left.equalTo(titleLabel)
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
         }
+        
+        
         
     }
 }
