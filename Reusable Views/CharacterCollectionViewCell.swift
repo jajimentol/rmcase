@@ -20,15 +20,17 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         addSubview(imageView)
         imageView.snp.makeConstraints { (make) in
-            make.left.right.equalTo(self)
+            make.top.left.right.equalTo(self)
             make.height.equalTo(imageView.snp.width).multipliedBy(1.14)
         }
         
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18.0)
+        titleLabel.numberOfLines = 0
+        titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.textColor = .white
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
-            make.left.bottom.equalTo(self)
+            make.left.right.equalTo(self)
             make.top.equalTo(imageView.snp.bottom).offset(10)
         }
     }
@@ -41,7 +43,7 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
         titleLabel.text = character.name
         
         if let url = URL(string: character.imageUrl) {
-            ImageDownloader.downloadImage(from: url) { (image) in
+            ImageDownloader().downloadImage(from: url) { (image) in
                 DispatchQueue.main.async {
                     self.imageView.image = image
                 }
