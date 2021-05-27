@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+final class CharacterDetailViewController: BaseViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setInterface()
+    }
+    
+    func setInterface() {
+        
+    }
+}

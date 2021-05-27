@@ -7,7 +7,13 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+typealias BaseViewController = BaseVC & BaseVCProtocol
+
+protocol BaseVCProtocol {
+    func setInterface()
+}
+
+class BaseVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
