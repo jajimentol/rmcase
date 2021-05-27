@@ -17,10 +17,9 @@ final class CharacterDetailViewController: BaseViewController {
     
     var doneButton = UIButton()
     var episodesButton = UIButton()
-    
-    var episodesScrollView = UIScrollView()
-    var episodeStackView: UIStackView?
-    var scrollViewHeightConstarint = 60.0
+    var episodesView = UIView()
+    var episodesTableView = UITableView()
+    var episodesViewHeightConstarint: Double = 60
     
     var characterID: Int!
     
@@ -38,7 +37,7 @@ final class CharacterDetailViewController: BaseViewController {
             
             self.characterDetailVM.getEpisodeNames {
                 DispatchQueue.main.async {
-                    self.fillScrollView()
+                    self.episodesTableView.reloadData()
                 }
             }
             
@@ -101,13 +100,12 @@ final class CharacterDetailViewController: BaseViewController {
             make.top.equalTo(characterStateLabel.snp.bottom).offset(14)
         }
         
-        episodesScrollView.showsVerticalScrollIndicator = false
-        episodesScrollView.layer.cornerRadius = 12.0
-        episodesScrollView.clipsToBounds = true
-        episodesScrollView.backgroundColor = UIColor(hex: "#1c1e1f")
-        view.addSubview(episodesScrollView)
-        episodesScrollView.snp.makeConstraints { (make) in
-            make.left.equalTo(characterImageView)
+        episodesView.clipsToBounds = true
+        episodesView.backgroundColor = UIColor(hex: "#1c1e1f")
+        episodesView.layer.cornerRadius = 12.0
+        view.addSubview(episodesView)
+        episodesView.snp.makeConstraints { (make) in
+            make.left.equalTo(view).offset(20)
             make.right.equalTo(view).offset(-20)
             make.top.equalTo(characterImageView.snp.bottom).offset(30)
             make.height.equalTo(60)
@@ -117,40 +115,14 @@ final class CharacterDetailViewController: BaseViewController {
         episodesButton.setTitle("Episodes", for: .normal)
         episodesButton.contentHorizontalAlignment = .left
         episodesButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
-        view.addSubview(episodesButton)
+        episodesView.addSubview(episodesButton)
         episodesButton.snp.makeConstraints { (make) in
-            make.top.left.equalTo(episodesScrollView)
+            make.top.left.equalTo(episodesView)
             make.right.equalTo(view).offset(-20)
-            make.height.equalTo(scrollViewHeightConstarint)
-        }
-    }
-    
-    func fillScrollView() {
-        
-        var episodeLabels: [UILabel] = []
-        
-        if let episodes = characterDetailVM.episodes {
-            for item in episodes {
-                let label = UILabel()
-                label.font = UIFont.boldSystemFont(ofSize: 14.0)
-                label.textColor = .white
-                label.text = item.getEpisodeName()
-                label.textAlignment = .left
-                episodeLabels.append(label)
-            }
+            make.height.equalTo(60)
         }
         
-        episodeStackView = UIStackView(arrangedSubviews: episodeLabels)
-        episodeStackView?.axis  = .vertical
-        episodeStackView?.alignment = .leading
-        episodeStackView?.distribution  = .fillEqually
-        episodeStackView?.alignment = UIStackView.Alignment.center
-        episodeStackView?.spacing   = 10.0
-        episodesScrollView.addSubview(episodeStackView!)
-        episodeStackView?.snp.makeConstraints { (make) in
-            make.top.equalTo(episodesButton.snp.bottom).offset(25)
-            make.left.right.bottom.equalTo(episodesScrollView)
-        }
+        setupTableView()
     }
     
     func fillPage(with character: Character) {
@@ -169,20 +141,30 @@ final class CharacterDetailViewController: BaseViewController {
         characterGenderLabel.text = character.gender
     }
     
+    func setupTableView() {
+        episodesTableView.backgroundColor = UIColor(hex: "#1c1e1f")
+        episodesTableView.delegate = self
+        episodesTableView.dataSource = self
+        episodesTableView.separatorStyle = .none
+        
+        episodesView.addSubview(episodesTableView)
+        episodesTableView.snp.makeConstraints { (make) in
+            make.left.right.equalTo(episodesView)
+            make.top.equalTo(episodesButton.snp.bottom).offset(5)
+            make.height.equalTo(180)
+        }
+    }
+    
     @objc func episodesTapped() {
-        if scrollViewHeightConstarint == 60 {
-            let newHeight = Double(((characterDetailVM.episodes?.count ?? 0) + 1) * 28) + 60
-            scrollViewHeightConstarint = newHeight
-            
+        if episodesViewHeightConstarint == 60 {
+            episodesViewHeightConstarint = 240
         } else {
-            scrollViewHeightConstarint = 60
+            episodesViewHeightConstarint = 60
         }
         UIView.animate(withDuration: 0.5) { [self] in
-            self.episodesScrollView.snp.updateConstraints { (make) in
-                make.height.equalTo(scrollViewHeightConstarint)
+            self.episodesView.snp.updateConstraints { (make) in
+                make.height.equalTo(episodesViewHeightConstarint)
             }
-            
-            episodesScrollView.layoutIfNeeded()
         }
         
     }
@@ -190,4 +172,22 @@ final class CharacterDetailViewController: BaseViewController {
     @objc func doneTapped() {
         self.dismiss(animated: true, completion: nil)
     }
+}
+
+extension CharacterDetailViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return characterDetailVM.episodes?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = characterDetailVM.episodes![indexPath.row].getEpisodeName()
+        cell.textLabel?.textColor = .white
+        cell.textLabel?.adjustsFontSizeToFitWidth = true
+        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 14.0)
+        cell.backgroundColor = .clear
+        return cell
+    }
+    
+    
 }
