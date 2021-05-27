@@ -16,3 +16,14 @@ public var screenWidth: CGFloat {
 public var screenHeight: CGFloat {
     return UIScreen.main.bounds.height
 }
+
+func showAlert(message: String) {
+    DispatchQueue.main.async {
+        let alert = UIAlertController(title: "Error", message:message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        
+        if let appDelegateObj = UIApplication.shared.delegate! as? AppDelegate {
+            appDelegateObj.window?.rootViewController?.present(alert, animated: true, completion: nil)
+        }
+    }
+}
