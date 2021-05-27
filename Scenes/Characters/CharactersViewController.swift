@@ -17,6 +17,10 @@ final class CharactersViewController: BaseViewController {
     let flowLayout = UICollectionViewFlowLayout()
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
+    let emptyLabel = UILabel()
+    
+    lazy var spinner = UIActivityIndicatorView(style: .whiteLarge)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,8 +33,14 @@ final class CharactersViewController: BaseViewController {
     }
     
     func getCharacters() {
-        charactersVM.getCharacters(completionHandler: {
-            self.reloadCollectionView()
+        loading()
+        charactersVM.getCharacters(completionHandler: { [weak self] isEmpty in
+            guard let strongSelf = self else { return }
+            if isEmpty {
+                strongSelf.emptyState()
+            } else {
+                strongSelf.reloadCollectionView()
+            }
         })
     }
     
@@ -48,15 +58,20 @@ final class CharactersViewController: BaseViewController {
         }
         
         setupCollectionView()
+        setupEmptyLabel()
         
+        view.addSubview(spinner)
+        spinner.snp.makeConstraints { (make) in
+            make.centerX.centerY.equalTo(view)
+        }
     }
     
     func setupCollectionView() {
         let itemWidth = (screenWidth - 60) / 2
-        let itemHeight = itemWidth * 1.34
+        let itemHeight = itemWidth * 1.38
         flowLayout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         flowLayout.minimumInteritemSpacing = 20
-        flowLayout.minimumLineSpacing = 30
+        flowLayout.minimumLineSpacing = 10
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.setCollectionViewLayout(flowLayout, animated: false)
@@ -74,8 +89,36 @@ final class CharactersViewController: BaseViewController {
         collectionView.reloadData()
     }
     
+    func loading() {
+        spinner.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+    
+    func loaded() {
+        spinner.stopAnimating()
+        view.isUserInteractionEnabled = true
+    }
+    
+    func emptyState() {
+        DispatchQueue.main.async {
+            self.emptyLabel.isHidden = false
+            self.collectionView.isHidden = true
+        }
+    }
+    
+    func setupEmptyLabel() {
+        emptyLabel.text = "No characters available"
+        emptyLabel.textColor = .white
+        emptyLabel.isHidden = true
+        view.addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints { (make) in
+            make.centerX.centerY.equalTo(view)
+        }
+    }
+    
     func reloadCollectionView() {
         DispatchQueue.main.async {
+            self.loaded()
             self.collectionView.reloadData()
         }
     }
@@ -87,8 +130,11 @@ extension CharactersViewController: UICollectionViewDataSource, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if (indexPath.item == charactersVM.characterList.count - 5) {
+            getCharacters()
+        }
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as? CharacterCollectionViewCell else { return UICollectionViewCell() }
-        let character = charactersVM.characterList[indexPath.row]
+        let character = charactersVM.characterList[indexPath.item]
         cell.fillCell(with: character)
         return cell
     }

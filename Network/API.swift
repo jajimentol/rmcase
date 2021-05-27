@@ -13,11 +13,11 @@ final class API: NSObject {
     
     let defaultSession = URLSession(configuration: .default)
     
-    func getAllCharacters(page: Int = 0, completionHandler: @escaping (ResponseModel) -> Void) {
-        if page == 0 {
+    func getAllCharacters(page: String, completionHandler: @escaping (ResponseModel) -> Void) {
+        if page == "1" {
             getRequest(url: "https://rickandmortyapi.com/api/character", completionHandler: completionHandler)
         } else {
-            getRequest(url: "https://rickandmortyapi.com/api/character/?page" + String(format: "%d", page),
+            getRequest(url: "https://rickandmortyapi.com/api/character/?page=" + page,
                        completionHandler: completionHandler)
         }
         
