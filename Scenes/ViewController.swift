@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 typealias BaseViewController = BaseVC & BaseVCProtocol
 
