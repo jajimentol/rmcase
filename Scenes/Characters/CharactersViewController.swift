@@ -46,7 +46,7 @@ final class CharactersViewController: BaseViewController {
     
     func setInterface() {
         
-        view.backgroundColor = UIColor(hex: "131415")
+        view.backgroundColor = UIColor(named: "#131415")
         
         titleLabel.text = "Characters"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24.0)
@@ -137,6 +137,12 @@ extension CharactersViewController: UICollectionViewDataSource, UICollectionView
         let character = charactersVM.characterList[indexPath.item]
         cell.fillCell(with: character)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailVC = CharacterDetailViewController()
+        detailVC.characterID = charactersVM.characterList[indexPath.item].id
+        self.present(detailVC, animated: true, completion: nil)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
