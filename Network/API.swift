@@ -31,7 +31,7 @@ final class API: NSObject {
             guard let data = data else { return }
             
             if let error = error {
-                print(error.localizedDescription)
+                showAlert(message: error.localizedDescription)
             }
             
             if let rsp = try? JSONDecoder().decode(ResponseModel.self, from: data) {
