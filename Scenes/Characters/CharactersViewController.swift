@@ -21,10 +21,17 @@ final class CharactersViewController: BaseViewController {
         super.viewDidLoad()
         
         setInterface()
+        getCharacters()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    func getCharacters() {
+        charactersVM.getCharacters(completionHandler: {
+            self.reloadCollectionView()
+        })
     }
     
     func setInterface() {
@@ -51,6 +58,7 @@ final class CharactersViewController: BaseViewController {
         flowLayout.minimumInteritemSpacing = 20
         flowLayout.minimumLineSpacing = 30
         
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.setCollectionViewLayout(flowLayout, animated: false)
         collectionView.register(CharacterCollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
         collectionView.backgroundColor = .clear
@@ -65,16 +73,23 @@ final class CharactersViewController: BaseViewController {
         }
         collectionView.reloadData()
     }
+    
+    func reloadCollectionView() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
 }
 
 extension CharactersViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return charactersVM.characterList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath) as? CharacterCollectionViewCell else { return UICollectionViewCell() }
-        cell.fillCell()
+        let character = charactersVM.characterList[indexPath.row]
+        cell.fillCell(with: character)
         return cell
     }
     

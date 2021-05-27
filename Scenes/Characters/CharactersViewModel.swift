@@ -9,5 +9,16 @@ import Foundation
 
 final class CharactersViewModel: NSObject {
     
+    let api = API()
     
+    var characterList: [Character] = []
+    
+    func getCharacters(completionHandler: @escaping () -> ()) {
+        
+        api.getAllCharacters { response in
+            
+            self.characterList.append(contentsOf: response.results)
+            completionHandler()
+        }
+    }
 }
