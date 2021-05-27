@@ -15,15 +15,15 @@ final class API: NSObject {
     
     func getAllCharacters(page: String, completionHandler: @escaping (ResponseModel) -> Void) {
         if page == "1" {
-            getRequest(url: "https://rickandmortyapi.com/api/character", completionHandler: completionHandler)
+            getCharactersRequest(url: "https://rickandmortyapi.com/api/character", completionHandler: completionHandler)
         } else {
-            getRequest(url: "https://rickandmortyapi.com/api/character/?page=" + page,
+            getCharactersRequest(url: "https://rickandmortyapi.com/api/character/?page=" + page,
                        completionHandler: completionHandler)
         }
         
     }
     
-    func getRequest(url: String, completionHandler: @escaping (ResponseModel) -> Void) {
+    func getCharactersRequest(url: String, completionHandler: @escaping (ResponseModel) -> Void) {
         
         let url = URL(string: url)!
             
@@ -41,5 +41,50 @@ final class API: NSObject {
 
         task.resume()
         }
+    
+    func getSingleCharacter(id: String, completionHandler: @escaping (Character) -> Void) {
+        let url = URL(string: "https://rickandmortyapi.com/api/character/" + id)!
+        
+        let task = defaultSession.dataTask(with: url) {(data, response, error) in
+            guard let data = data else { return }
+            
+            if let error = error {
+                showAlert(message: error.localizedDescription)
+            }
+            
+            if let rsp = try? JSONDecoder().decode(Character.self, from: data) {
+                completionHandler(rsp)
+            }
+        }
+
+        task.resume()
+    }
+    
+    func getEpisodeNames(ids: [String], completionHandler: @escaping ([Episode]) -> Void) {
+        
+        var queryUrl = ""
+        for item in ids {
+            queryUrl = queryUrl + item + ","
+        }
+        
+        queryUrl.removeLast()
+        
+        let url = URL(string: "https://rickandmortyapi.com/api/episode/" + queryUrl)!
+        
+        let task = defaultSession.dataTask(with: url) {(data, response, error) in
+            guard let data = data else { return }
+            
+            if let error = error {
+                showAlert(message: error.localizedDescription)
+            }
+            
+            if let rsp = try? JSONDecoder().decode([Episode].self, from: data) {
+                completionHandler(rsp)
+            }
+        }
+
+        task.resume()
+        
+    }
     
 }
