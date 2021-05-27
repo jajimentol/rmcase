@@ -15,6 +15,7 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 5
         imageView.contentMode = .scaleAspectFill
         addSubview(imageView)
@@ -34,6 +35,18 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func fillCell(with character: Character) {
+        titleLabel.text = character.name
+        
+        if let url = URL(string: character.imageUrl) {
+            ImageDownloader.downloadImage(from: url) { (image) in
+                DispatchQueue.main.async {
+                    self.imageView.image = image
+                }
+            }
+        }
     }
     
     
