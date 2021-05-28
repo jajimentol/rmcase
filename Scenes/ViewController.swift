@@ -31,12 +31,12 @@ class BaseVC: UIViewController {
 
     func loading() {
         spinner.startAnimating()
-        view.isUserInteractionEnabled = false
+//        view.isUserInteractionEnabled = false
     }
     
     func loaded() {
         spinner.stopAnimating()
-        view.isUserInteractionEnabled = true
+//        view.isUserInteractionEnabled = true
     }
 }
 
