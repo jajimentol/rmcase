@@ -102,8 +102,8 @@ final class CharactersViewController: BaseViewController {
     
     func reloadCollectionView() {
         DispatchQueue.main.async {
-            self.loaded()
             self.collectionView.reloadData()
+            self.loaded()
         }
     }
 }

@@ -39,12 +39,12 @@ final class CharacterDetailViewController: BaseViewController {
             self.characterDetailVM.getEpisodeNames {
                 DispatchQueue.main.async {
                     self.episodesTableView.reloadData()
+                    self.loaded()
                 }
             }
             
             DispatchQueue.main.async {
                 self.fillPage(with: self.characterDetailVM.character!)
-                self.loaded()
             }
         }
         
