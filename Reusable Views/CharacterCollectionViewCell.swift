@@ -9,8 +9,10 @@ import UIKit
 
 final class CharacterCollectionViewCell: UICollectionViewCell {
     
-    let imageView = UIImageView()
-    let titleLabel = UILabel()
+    var imageView = UIImageView()
+    var titleLabel = UILabel()
+    
+    var imageUrl: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,14 +26,14 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(imageView.snp.width).multipliedBy(1.14)
         }
         
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 18.0)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17.0)
         titleLabel.numberOfLines = 0
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.textColor = .white
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
             make.left.right.equalTo(self)
-            make.top.equalTo(imageView.snp.bottom).offset(10)
+            make.top.equalTo(imageView.snp.bottom).offset(8)
         }
     }
 
@@ -41,11 +43,16 @@ final class CharacterCollectionViewCell: UICollectionViewCell {
     
     func fillCell(with character: Character) {
         titleLabel.text = character.name
+        imageView.image = nil
         
-        if let url = URL(string: character.imageUrl) {
-            ImageDownloader().downloadImage(from: url) { (image) in
-                DispatchQueue.main.async {
-                    self.imageView.image = image
+        self.imageUrl = character.imageUrl
+        
+        DispatchQueue.global().async {
+            if let url = URL(string: character.imageUrl), let data = try? Data(contentsOf: url) {
+                if character.imageUrl == self.imageUrl {
+                    DispatchQueue.main.async {
+                        self.imageView.image = UIImage(data: data)
+                    }
                 }
             }
         }
