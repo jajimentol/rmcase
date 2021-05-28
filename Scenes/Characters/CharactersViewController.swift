@@ -19,8 +19,6 @@ final class CharactersViewController: BaseViewController {
     
     let emptyLabel = UILabel()
     
-    lazy var spinner = UIActivityIndicatorView(style: .whiteLarge)
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,11 +57,7 @@ final class CharactersViewController: BaseViewController {
         
         setupCollectionView()
         setupEmptyLabel()
-        
-        view.addSubview(spinner)
-        spinner.snp.makeConstraints { (make) in
-            make.centerX.centerY.equalTo(view)
-        }
+    
     }
     
     func setupCollectionView() {
@@ -87,16 +81,6 @@ final class CharactersViewController: BaseViewController {
             make.bottom.equalTo(view)
         }
         collectionView.reloadData()
-    }
-    
-    func loading() {
-        spinner.startAnimating()
-        view.isUserInteractionEnabled = false
-    }
-    
-    func loaded() {
-        spinner.stopAnimating()
-        view.isUserInteractionEnabled = true
     }
     
     func emptyState() {

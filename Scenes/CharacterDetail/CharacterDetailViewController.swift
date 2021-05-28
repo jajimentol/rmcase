@@ -33,6 +33,7 @@ final class CharacterDetailViewController: BaseViewController {
     }
     
     func getCharacterDetail() {
+        loading()
         characterDetailVM.getCharacter(id: String(format: "%d", self.characterID)) {
             
             self.characterDetailVM.getEpisodeNames {
@@ -43,6 +44,7 @@ final class CharacterDetailViewController: BaseViewController {
             
             DispatchQueue.main.async {
                 self.fillPage(with: self.characterDetailVM.character!)
+                self.loaded()
             }
         }
         
@@ -50,10 +52,10 @@ final class CharacterDetailViewController: BaseViewController {
     }
     
     func setInterface() {
-        view.backgroundColor = UIColor(hex: "#131415")
+        view.backgroundColor = UIColor.getUIColor(color: "131415")
         
         doneButton.setTitle("Done", for: .normal)
-        doneButton.setTitleColor(UIColor(hex: "#8a67be"), for: .normal)
+        doneButton.setTitleColor(UIColor.getUIColor(color: "8a67be"), for: .normal)
         doneButton.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
         view.addSubview(doneButton)
         doneButton.snp.makeConstraints { (make) in
@@ -101,7 +103,7 @@ final class CharacterDetailViewController: BaseViewController {
         }
         
         episodesView.clipsToBounds = true
-        episodesView.backgroundColor = UIColor(hex: "#1c1e1f")
+        episodesView.backgroundColor = UIColor.getUIColor(color: "1c1e1f")
         episodesView.layer.cornerRadius = 12.0
         view.addSubview(episodesView)
         episodesView.snp.makeConstraints { (make) in
@@ -123,6 +125,11 @@ final class CharacterDetailViewController: BaseViewController {
         }
         
         setupTableView()
+        
+        view.addSubview(spinner)
+        spinner.snp.makeConstraints { (make) in
+            make.centerX.centerY.equalTo(view)
+        }
     }
     
     func fillPage(with character: Character) {
@@ -142,7 +149,7 @@ final class CharacterDetailViewController: BaseViewController {
     }
     
     func setupTableView() {
-        episodesTableView.backgroundColor = UIColor(hex: "#1c1e1f")
+        episodesTableView.backgroundColor = UIColor.getUIColor(color: "1c1e1f")
         episodesTableView.delegate = self
         episodesTableView.dataSource = self
         episodesTableView.separatorStyle = .none
@@ -161,10 +168,13 @@ final class CharacterDetailViewController: BaseViewController {
         } else {
             episodesViewHeightConstarint = 60
         }
+        
+        self.episodesView.snp.updateConstraints { (make) in
+            make.height.equalTo(episodesViewHeightConstarint)
+        }
+        
         UIView.animate(withDuration: 0.5) { [self] in
-            self.episodesView.snp.updateConstraints { (make) in
-                make.height.equalTo(episodesViewHeightConstarint)
-            }
+            self.episodesView.superview?.layoutIfNeeded()
         }
         
     }
