@@ -52,13 +52,8 @@ struct Character: Codable {
         var episodeIds: [String] = []
         if let episodes = self.episodes {
             for item in episodes {
-                if episodeIds.count > 8 {
-                    let id = String(item.suffix(2))
-                    episodeIds.append(id)
-                } else {
-                    let id = String(item.last!)
-                    episodeIds.append(id)
-                }
+                let id = item.replacingOccurrences(of: "https://rickandmortyapi.com/api/episode/", with: "")
+                episodeIds.append(id)
             }
         }
         return episodeIds
