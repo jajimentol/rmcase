@@ -80,6 +80,9 @@ final class API: NSObject {
             
             if let rsp = try? JSONDecoder().decode([Episode].self, from: data) {
                 completionHandler(rsp)
+            } else if let rsp = try? JSONDecoder().decode(Episode.self, from: data) {
+                let array = [rsp]
+                completionHandler(array)
             }
         }
 
