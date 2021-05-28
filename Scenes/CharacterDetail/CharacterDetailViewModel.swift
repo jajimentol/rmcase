@@ -29,4 +29,12 @@ final class CharacterDetailViewModel: NSObject {
             completionHandler()
         }
     }
+    
+    func getTableViewHeight() -> Double {
+        if (episodes?.count ?? 0) >= 4 {
+            return 240
+        } else {
+            return Double(60 + ((self.episodes?.count ?? 0) * 45))
+        }
+    }
 }

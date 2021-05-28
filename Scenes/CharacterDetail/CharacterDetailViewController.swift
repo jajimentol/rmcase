@@ -25,6 +25,9 @@ final class CharacterDetailViewController: BaseViewController {
     
     let characterDetailVM = CharacterDetailViewModel()
     
+    let tableViewSeparator = UIImageView()
+    let buttonArrowImageView = UIImageView(image: UIImage(named: "upArrow"))
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -124,6 +127,12 @@ final class CharacterDetailViewController: BaseViewController {
             make.height.equalTo(60)
         }
         
+        episodesButton.addSubview(buttonArrowImageView)
+        buttonArrowImageView.snp.makeConstraints { (make) in
+            make.centerY.equalTo(episodesButton)
+            make.right.equalTo(episodesButton).offset(-16)
+        }
+        
         setupTableView()
         
         view.addSubview(spinner)
@@ -160,13 +169,26 @@ final class CharacterDetailViewController: BaseViewController {
             make.top.equalTo(episodesButton.snp.bottom).offset(5)
             make.height.equalTo(180)
         }
+        
+        tableViewSeparator.backgroundColor = UIColor.getUIColor(color: "353535")
+        episodesTableView.addSubview(tableViewSeparator)
+        tableViewSeparator.snp.makeConstraints { (make) in
+            make.left.equalTo(episodesTableView).offset(18)
+            make.height.equalTo(1)
+            make.width.equalTo(100)
+            make.top.equalTo(episodesTableView)
+        }
+        
     }
     
     @objc func episodesTapped() {
+        
         if episodesViewHeightConstarint == 60 {
-            episodesViewHeightConstarint = 240
+            episodesViewHeightConstarint = characterDetailVM.getTableViewHeight()
+            buttonArrowImageView.image = UIImage(named: "downArrow")
         } else {
             episodesViewHeightConstarint = 60
+            buttonArrowImageView.image = UIImage(named: "upArrow")
         }
         
         self.episodesView.snp.updateConstraints { (make) in
