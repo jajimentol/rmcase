@@ -68,7 +68,7 @@ final class CharacterDetailViewController: BaseViewController {
         characterNameLabel.numberOfLines = 0
         view.addSubview(characterNameLabel)
         characterNameLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(view).offset(44)
+            make.top.equalTo(doneButton.snp.bottom).offset(20)
             make.left.equalTo(view).offset(20)
             make.right.equalTo(view).offset(-20)
         }
